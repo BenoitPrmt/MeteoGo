@@ -19,14 +19,20 @@ import CityDetails from "@/components/CityDetails";
 import cityDetails from "@/components/CityDetails";
 import {CityType, GeocodingResultType} from "@/types/City";
 import {WeatherType} from "@/types/Weather";
+import {Fab, FabIcon, FabLabel} from "@/components/ui/fab";
+import {AddIcon} from "@/components/ui/icon";
+import {ArrowDownUpIcon} from "lucide-react-native";
+import ChangeCity from "@/components/ChangeCity";
 
 
 export default function HomeScreen() {
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [cityName, setCityName] = useState<string>("Orléans")
     const [city, setCity] = useState<CityType>()
     const [weather, setWeather] = useState<WeatherType>();
 
     const [isCityDetailsOpen, setCityDetailsOpen] = useState<boolean>(false);
+    const [isChangeCityOpen, setChangeCityOpen] = useState<boolean>(false);
 
     const screenWidth = Dimensions.get("window").width;
 
@@ -38,14 +44,26 @@ export default function HomeScreen() {
         setCityDetailsOpen(false);
     }
 
+    const handleOpenChangeCity = () => {
+        setChangeCityOpen(true);
+    }
+
+    const handleCloseChangeCity = () => {
+        setChangeCityOpen(false);
+    }
+
     const handleRefresh = async () => {
         setIsRefreshing(true);
         loadData();
         setIsRefreshing(false);
     };
 
+    const handleFabPress = () => {
+        setChangeCityOpen(true);
+    };
+
     const loadData = async () => {
-        fetch("https://geocoding-api.open-meteo.com/v1/search?name=Orléans&count=10&language=fr&format=json").then(async (response) => {
+        fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${cityName}&count=10&language=fr&format=json`).then(async (response) => {
             const json: GeocodingResultType = await response.json();
             const cityData: CityType = json.results[0];
             setCity(cityData);
@@ -64,6 +82,10 @@ export default function HomeScreen() {
     useEffect(() => {
         loadData().then(() => console.log("Données chargées"));
     }, []);
+
+    useEffect(() => {
+        loadData().then(() => console.log("Données de la nouvelle ville chargées"));
+    }, [cityName]);
 
     const dataTemperatures: LineChartData = {
         labels: weather?.hourly.time || [],
@@ -130,8 +152,7 @@ export default function HomeScreen() {
                     />
                 )}
                 {!weather && <Skeleton variant="sharp" className="h-[220px] w-full rounded-md" />}
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
+
                 <ThemedText type="subtitle">Probabilité de précipitations</ThemedText>
                 {weather && (
                     <WeatherChart
@@ -142,8 +163,7 @@ export default function HomeScreen() {
                     />
                 )}
                 {!weather && <Skeleton variant="sharp" className="h-[220px] w-full rounded-md" />}
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
+
                 <ThemedText type="subtitle">Vitesse du vent</ThemedText>
                 {weather && (
                     <WeatherChart
@@ -154,10 +174,24 @@ export default function HomeScreen() {
                     />
                 )}
                 {!weather && <Skeleton variant="sharp" className="h-[220px] w-full rounded-md" />}
+
+                <Fab
+                    size="md"
+                    placement="bottom center"
+                    isHovered={false}
+                    isDisabled={false}
+                    isPressed={false}
+                    style={styles.fab}
+                    onPress={handleFabPress}
+                >
+                    <FabIcon as={ArrowDownUpIcon} />
+                    <FabLabel>Voir une autre ville</FabLabel>
+                </Fab>
             </ThemedView>
 
             {city && <CityDetails isOpen={isCityDetailsOpen} handleClose={handleCloseCityDetails} city={city} />}
 
+            <ChangeCity isOpen={isChangeCityOpen} handleClose={handleCloseChangeCity} setCity={setCityName} />
         </ParallaxScrollView>
     );
 }
@@ -169,14 +203,26 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     stepContainer: {
+        flex: 1,
         gap: 8,
         marginBottom: 8,
     },
     weatherIcon: {
         height: 200,
         width: 200,
-        // bottom: 0,
-        // left: 30,
         position: 'absolute',
+    },
+    fab: {
+        position: 'absolute',
+        bottom: 100,
+        zIndex: 1000,
+        elevation: 6,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
 });

@@ -21,7 +21,7 @@ export default function TabTwoScreen() {
             <Heading size={"2xl"}>⚡️À propos</Heading>
             <Heading size={"xl"}>✨ L'application</Heading>
             <ThemedText>
-                Ce projet est une application mobile de todo list. Je l'ai réalisée dans le cadre d'un cours de développement mobile à Coda. Elle a été développée avec React Native et Expo.
+                Ce projet est une application mobile météo. Je l'ai réalisée dans le cadre d'un cours de développement mobile à Coda. Elle a été développée avec React Native et Expo.
             </ThemedText>
             <Heading size={"xl"}>👨‍💻 Le développeur</Heading>
             <ThemedText>
