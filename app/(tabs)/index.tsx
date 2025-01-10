@@ -24,7 +24,7 @@ import {AddIcon, Icon} from "@/components/ui/icon";
 import {
     ArrowDownIcon,
     ArrowDownUpIcon,
-    ArrowUpIcon,
+    ArrowUpIcon, SearchIcon,
     SunriseIcon,
     SunsetIcon,
     ThermometerSunIcon
@@ -76,7 +76,7 @@ export default function HomeScreen() {
             const json: GeocodingResultType = await response.json();
             const cityData: CityType = json.results[0];
             setCity(cityData);
-            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${cityData.latitude}&longitude=${cityData.longitude}&current=temperature_2m,apparent_temperature,precipitation,weather_code&hourly=temperature_2m,precipitation_probability,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&forecast_days=1`)
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${cityData.latitude}&longitude=${cityData.longitude}&current=temperature_2m,apparent_temperature,precipitation,weather_code,is_day&hourly=temperature_2m,precipitation_probability,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&forecast_days=1`)
                 .then(async (resp) => {
                     const weatherData: WeatherType = await resp.json();
                     const now: Date = new Date();
@@ -87,10 +87,6 @@ export default function HomeScreen() {
                 })
         });
     }
-
-    useEffect(() => {
-        loadData().then(() => console.log("Données chargées"));
-    }, []);
 
     useEffect(() => {
         loadData().then(() => console.log("Données de la nouvelle ville chargées"));
@@ -127,135 +123,139 @@ export default function HomeScreen() {
     };
 
     return (
-        <ParallaxScrollView
-            refresh={isRefreshing}
-            onRefresh={handleRefresh}
-            headerBackgroundColor={{light: '#0062e2', dark: '#0062e2'}}
-            headerImage={
-                <VStack>
-                    <Center className={"flex justify-center"}>
-                        <Heading className={"font-bold text-7xl pt-10 text-white"}>
-                            {weather?.current.temperature_2m}{weather?.current_units.temperature_2m}
-                        </Heading>
-                    </Center>
-                    <Center>
-                        <Pressable onPress={handleOpenCityDetails}>
-                            <Heading className={"font-bold text-4xl text-white"}>
-                                {city?.name}
+        <ThemedView style={{flex: 1}}>
+            <ParallaxScrollView
+                refresh={isRefreshing}
+                onRefresh={handleRefresh}
+                headerBackgroundColor={{light: '#0062e2', dark: '#0062e2'}}
+                headerImage={
+                    <VStack>
+                        <Center className={"flex justify-center"}>
+                            <Heading className={"font-bold text-7xl pt-10 text-white"}>
+                                {weather?.current.temperature_2m}{weather?.current_units.temperature_2m}
                             </Heading>
-                        </Pressable>
-                    </Center>
+                        </Center>
+                        <Center>
+                            <Pressable onPress={handleOpenCityDetails}>
+                                <Heading className={"font-bold text-4xl text-white"}>
+                                    {city?.name}
+                                </Heading>
+                            </Pressable>
+                        </Center>
+                        <Center>
+                            {weather &&
+                                <Image size={"md"} source={WMO_ICONS[`${weather?.current.weather_code}`][`${weather?.current.is_day ? 'day' : 'night'}`].image}
+                                       alt={WMO_ICONS[`${weather?.current.weather_code}`][`${weather?.current.is_day ? 'day' : 'night'}`].description}/>}
+                        </Center>
+                    </VStack>
+                }>
+                <ThemedView style={styles.stepContainer}>
+
                     <Center>
-                        {weather && <Image size={"md"} source={WMO_ICONS[`${weather?.current.weather_code}`].day.image} alt={WMO_ICONS[`${weather?.current.weather_code}`].day.description} /> }
+                        <HStack space={"3xl"}>
+                            <VStack>
+                                <Center>
+                                    <Icon as={ThermometerSunIcon} color={"#2f3370"}/>
+                                    <Heading className={"font-bold text-xl text-[#2f3370]"}>
+                                        {weather?.current.apparent_temperature}{weather?.current_units.apparent_temperature}
+                                    </Heading>
+                                </Center>
+                            </VStack>
+
+                            <VStack>
+                                <Center>
+                                    <Icon as={ArrowDownIcon} color={"#208eff"}/>
+                                    <Heading className={"font-bold text-xl text-[#208eff]"}>
+                                        {weather?.daily.temperature_2m_min}{weather?.daily_units.temperature_2m_min}
+                                    </Heading>
+                                </Center>
+                            </VStack>
+
+                            <VStack>
+                                <Center>
+                                    <Icon as={ArrowUpIcon} color={"#ff2937"}/>
+                                    <Heading className={"font-bold text-xl text-[#ff2937]"}>
+                                        {weather?.daily.temperature_2m_max}{weather?.daily_units.temperature_2m_max}
+                                    </Heading>
+                                </Center>
+                            </VStack>
+                            {/*</HStack>*/}
+                            {/*<HStack space={"4xl"} className={'pt-2'}>*/}
+                            <VStack>
+                                <Center>
+                                    <Icon as={SunriseIcon} color={"#ffb32e"}/>
+                                    <Heading className={"font-bold text-xl text-[#ffb32e]"}>
+                                        {/* @ts-ignore */}
+                                        {new Date(weather?.daily.sunrise).toLocaleTimeString('fr-FR').slice(0, 5)}
+                                    </Heading>
+                                </Center>
+                            </VStack>
+
+                            <VStack>
+                                <Center>
+                                    <Icon as={SunsetIcon} color={"#fa3d75"}/>
+                                    <Heading className={"font-bold text-xl text-[#fa3d75]"}>
+                                        {/* @ts-ignore */}
+                                        {new Date(weather?.daily.sunset).toLocaleTimeString('fr-FR').slice(0, 5)}
+                                    </Heading>
+                                </Center>
+                            </VStack>
+                        </HStack>
                     </Center>
-                </VStack>
-            }>
-            <ThemedView style={styles.stepContainer}>
 
-                <Center>
-                    <HStack space={"3xl"}>
-                        <VStack>
-                            <Center>
-                                <Icon as={ThermometerSunIcon} color={"#2f3370"} />
-                                <Heading className={"font-bold text-xl text-[#2f3370]"}>
-                                    {weather?.current.apparent_temperature}{weather?.current_units.apparent_temperature}
-                                </Heading>
-                            </Center>
-                        </VStack>
+                    <Divider className="my-0.5"/>
+                    <ThemedText type="subtitle">Températures</ThemedText>
+                    {weather && (
+                        <WeatherChart
+                            data={dataTemperatures}
+                            width={screenWidth - 20}
+                            chartConfig={CHART_CONFIG}
+                            yAxisSuffix={weather.hourly_units.temperature_2m}
+                        />
+                    )}
+                    {!weather && <Skeleton variant="sharp" className="h-[220px] w-full rounded-md"/>}
 
-                        <VStack>
-                            <Center>
-                                <Icon as={ArrowDownIcon} color={"#208eff"} />
-                                <Heading className={"font-bold text-xl text-[#208eff]"}>
-                                    {weather?.daily.temperature_2m_min}{weather?.daily_units.temperature_2m_min}
-                                </Heading>
-                            </Center>
-                        </VStack>
+                    <ThemedText type="subtitle">Probabilité de précipitations</ThemedText>
+                    {weather && (
+                        <WeatherChart
+                            data={dataPrecipitations}
+                            width={screenWidth - 20}
+                            chartConfig={CHART_CONFIG}
+                            yAxisSuffix={weather.hourly_units.precipitation_probability}
+                        />
+                    )}
+                    {!weather && <Skeleton variant="sharp" className="h-[220px] w-full rounded-md"/>}
 
-                        <VStack>
-                            <Center>
-                                <Icon as={ArrowUpIcon} color={"#ff2937"} />
-                                <Heading className={"font-bold text-xl text-[#ff2937]"}>
-                                    {weather?.daily.temperature_2m_max}{weather?.daily_units.temperature_2m_max}
-                                </Heading>
-                            </Center>
-                        </VStack>
-                    {/*</HStack>*/}
-                    {/*<HStack space={"4xl"} className={'pt-2'}>*/}
-                        <VStack>
-                            <Center>
-                                <Icon as={SunriseIcon} color={"#ffb32e"} />
-                                <Heading className={"font-bold text-xl text-[#ffb32e]"}>
-                                    {/* @ts-ignore */}
-                                    {new Date(weather?.daily.sunrise).toLocaleTimeString('fr-FR').slice(0, 5)}
-                                </Heading>
-                            </Center>
-                        </VStack>
+                    <ThemedText type="subtitle">Vitesse du vent</ThemedText>
+                    {weather && (
+                        <WeatherChart
+                            data={dataWind}
+                            width={screenWidth - 20}
+                            chartConfig={CHART_CONFIG}
+                            yAxisSuffix={weather.hourly_units.wind_speed_10m}
+                        />
+                    )}
+                    {!weather && <Skeleton variant="sharp" className="h-[220px] w-full rounded-md"/>}
+                </ThemedView>
+            </ParallaxScrollView>
 
-                        <VStack>
-                            <Center>
-                                <Icon as={SunsetIcon} color={"#fa3d75"} />
-                                <Heading className={"font-bold text-xl text-[#fa3d75]"}>
-                                    {/* @ts-ignore */}
-                                    {new Date(weather?.daily.sunset).toLocaleTimeString('fr-FR').slice(0, 5)}
-                                </Heading>
-                            </Center>
-                        </VStack>
-                    </HStack>
-                </Center>
+            <Fab
+                size="md"
+                placement="bottom center"
+                isHovered={false}
+                isDisabled={false}
+                isPressed={false}
+                style={styles.fab}
+                onPress={handleFabPress}
+            >
+                <FabIcon as={SearchIcon}/>
+                <FabLabel className={"font-bold"}>Voir une autre ville</FabLabel>
+            </Fab>
 
-                <Divider className="my-0.5" />
-                <ThemedText type="subtitle">Températures</ThemedText>
-                {weather && (
-                    <WeatherChart
-                        data={dataTemperatures}
-                        width={screenWidth - 20}
-                        chartConfig={CHART_CONFIG}
-                        yAxisSuffix={weather.hourly_units.temperature_2m}
-                    />
-                )}
-                {!weather && <Skeleton variant="sharp" className="h-[220px] w-full rounded-md" />}
+            {city && <CityDetails isOpen={isCityDetailsOpen} handleClose={handleCloseCityDetails} city={city}/>}
+            <ChangeCity isOpen={isChangeCityOpen} handleClose={handleCloseChangeCity} setCity={setCityName}/>
 
-                <ThemedText type="subtitle">Probabilité de précipitations</ThemedText>
-                {weather && (
-                    <WeatherChart
-                        data={dataPrecipitations}
-                        width={screenWidth - 20}
-                        chartConfig={CHART_CONFIG}
-                        yAxisSuffix={weather.hourly_units.precipitation_probability}
-                    />
-                )}
-                {!weather && <Skeleton variant="sharp" className="h-[220px] w-full rounded-md" />}
-
-                <ThemedText type="subtitle">Vitesse du vent</ThemedText>
-                {weather && (
-                    <WeatherChart
-                        data={dataWind}
-                        width={screenWidth - 20}
-                        chartConfig={CHART_CONFIG}
-                        yAxisSuffix={weather.hourly_units.wind_speed_10m}
-                    />
-                )}
-                {!weather && <Skeleton variant="sharp" className="h-[220px] w-full rounded-md" />}
-
-                <Fab
-                    size="md"
-                    placement="bottom center"
-                    isHovered={false}
-                    isDisabled={false}
-                    isPressed={false}
-                    style={styles.fab}
-                    onPress={handleFabPress}
-                >
-                    <FabIcon as={ArrowDownUpIcon} />
-                    <FabLabel>Voir une autre ville</FabLabel>
-                </Fab>
-            </ThemedView>
-
-            {city && <CityDetails isOpen={isCityDetailsOpen} handleClose={handleCloseCityDetails} city={city} />}
-
-            <ChangeCity isOpen={isChangeCityOpen} handleClose={handleCloseChangeCity} setCity={setCityName} />
-        </ParallaxScrollView>
+        </ThemedView>
     );
 }
 

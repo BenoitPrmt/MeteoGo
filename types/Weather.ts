@@ -12,6 +12,7 @@ export type WeatherType = {
         apparent_temperature: number;
         precipitation: number;
         weather_code: number;
+        is_day: number;
     },
     hourly_units: {
         time: string;
