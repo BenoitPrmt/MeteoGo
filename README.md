@@ -1,9 +1,9 @@
 # Weather App
 
 ## Todo
-- [ ] Persistance de la dernière ville
+- [x] Persistance de la dernière ville
 - [ ] Suggestion de villes (Paris, New York, Londres, Tokyo, Marrakesh)
-- [ ] Températures mini - maxi
+- [x] Températures mini - maxi
 
 This is an [Expo](https://expo.dev) + React Native project.
 

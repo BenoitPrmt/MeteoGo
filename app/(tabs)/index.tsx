@@ -32,11 +32,12 @@ import {
 import ChangeCity from "@/components/ChangeCity";
 import {Divider} from "@/components/ui/divider";
 import {HStack} from "@/components/ui/hstack";
+import {PersistanceService} from "@/services/PersistanceService";
 
 
 export default function HomeScreen() {
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [cityName, setCityName] = useState<string>("Orléans")
+    const [cityName, setCityName] = useState<string>("Orléans");
     const [city, setCity] = useState<CityType>()
     const [weather, setWeather] = useState<WeatherType>();
 
@@ -89,7 +90,16 @@ export default function HomeScreen() {
     }
 
     useEffect(() => {
+        PersistanceService.getSavedCity().then((city) => {
+            if (city) {
+                setCityName(city);
+            }
+        })
+    }, []);
+
+    useEffect(() => {
         loadData().then(() => console.log("Données de la nouvelle ville chargées"));
+        PersistanceService.saveCity(cityName);
     }, [cityName]);
 
     const dataTemperatures: LineChartData = {
@@ -144,7 +154,8 @@ export default function HomeScreen() {
                         </Center>
                         <Center>
                             {weather &&
-                                <Image size={"md"} source={WMO_ICONS[`${weather?.current.weather_code}`][`${weather?.current.is_day ? 'day' : 'night'}`].image}
+                                <Image size={"md"}
+                                       source={WMO_ICONS[`${weather?.current.weather_code}`][`${weather?.current.is_day ? 'day' : 'night'}`].image}
                                        alt={WMO_ICONS[`${weather?.current.weather_code}`][`${weather?.current.is_day ? 'day' : 'night'}`].description}/>}
                         </Center>
                     </VStack>
