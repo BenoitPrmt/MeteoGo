@@ -48,6 +48,7 @@ const ChangeCity = ({isOpen, handleClose, setCity}: Props) => {
 
     const handleSearch = () => {
         setCity(cityName);
+        setCityName("");
         handleClose();
     }
 
