@@ -24,5 +24,19 @@ export type WeatherType = {
         temperature_2m: number[];
         precipitation_probability: number[];
         wind_speed_10m: number[];
+    },
+    daily_units: {
+        time: string;
+        temperature_2m_max: string;
+        temperature_2m_min: string;
+        sunrise: string;
+        sunset: string;
+    },
+    daily: {
+        time: string[];
+        temperature_2m_max: number[];
+        temperature_2m_min: number[];
+        sunrise: string[];
+        sunset: string[];
     }
 }

@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import {ThemedText} from '@/components/ThemedText';
@@ -20,9 +20,18 @@ import cityDetails from "@/components/CityDetails";
 import {CityType, GeocodingResultType} from "@/types/City";
 import {WeatherType} from "@/types/Weather";
 import {Fab, FabIcon, FabLabel} from "@/components/ui/fab";
-import {AddIcon} from "@/components/ui/icon";
-import {ArrowDownUpIcon} from "lucide-react-native";
+import {AddIcon, Icon} from "@/components/ui/icon";
+import {
+    ArrowDownIcon,
+    ArrowDownUpIcon,
+    ArrowUpIcon,
+    SunriseIcon,
+    SunsetIcon,
+    ThermometerSunIcon
+} from "lucide-react-native";
 import ChangeCity from "@/components/ChangeCity";
+import {Divider} from "@/components/ui/divider";
+import {HStack} from "@/components/ui/hstack";
 
 
 export default function HomeScreen() {
@@ -67,7 +76,7 @@ export default function HomeScreen() {
             const json: GeocodingResultType = await response.json();
             const cityData: CityType = json.results[0];
             setCity(cityData);
-            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${cityData.latitude}&longitude=${cityData.longitude}&current=temperature_2m,apparent_temperature,precipitation,weather_code&hourly=temperature_2m,precipitation_probability,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&forecast_days=1`)
+            fetch(`https://api.open-meteo.com/v1/forecast?latitude=${cityData.latitude}&longitude=${cityData.longitude}&current=temperature_2m,apparent_temperature,precipitation,weather_code&hourly=temperature_2m,precipitation_probability,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&forecast_days=1`)
                 .then(async (resp) => {
                     const weatherData: WeatherType = await resp.json();
                     const now: Date = new Date();
@@ -142,6 +151,60 @@ export default function HomeScreen() {
                 </VStack>
             }>
             <ThemedView style={styles.stepContainer}>
+
+                <Center>
+                    <HStack space={"3xl"}>
+                        <VStack>
+                            <Center>
+                                <Icon as={ThermometerSunIcon} color={"#2f3370"} />
+                                <Heading className={"font-bold text-xl text-[#2f3370]"}>
+                                    {weather?.current.apparent_temperature}{weather?.current_units.apparent_temperature}
+                                </Heading>
+                            </Center>
+                        </VStack>
+
+                        <VStack>
+                            <Center>
+                                <Icon as={ArrowDownIcon} color={"#208eff"} />
+                                <Heading className={"font-bold text-xl text-[#208eff]"}>
+                                    {weather?.daily.temperature_2m_min}{weather?.daily_units.temperature_2m_min}
+                                </Heading>
+                            </Center>
+                        </VStack>
+
+                        <VStack>
+                            <Center>
+                                <Icon as={ArrowUpIcon} color={"#ff2937"} />
+                                <Heading className={"font-bold text-xl text-[#ff2937]"}>
+                                    {weather?.daily.temperature_2m_max}{weather?.daily_units.temperature_2m_max}
+                                </Heading>
+                            </Center>
+                        </VStack>
+                    {/*</HStack>*/}
+                    {/*<HStack space={"4xl"} className={'pt-2'}>*/}
+                        <VStack>
+                            <Center>
+                                <Icon as={SunriseIcon} color={"#ffb32e"} />
+                                <Heading className={"font-bold text-xl text-[#ffb32e]"}>
+                                    {/* @ts-ignore */}
+                                    {new Date(weather?.daily.sunrise).toLocaleTimeString('fr-FR').slice(0, 5)}
+                                </Heading>
+                            </Center>
+                        </VStack>
+
+                        <VStack>
+                            <Center>
+                                <Icon as={SunsetIcon} color={"#fa3d75"} />
+                                <Heading className={"font-bold text-xl text-[#fa3d75]"}>
+                                    {/* @ts-ignore */}
+                                    {new Date(weather?.daily.sunset).toLocaleTimeString('fr-FR').slice(0, 5)}
+                                </Heading>
+                            </Center>
+                        </VStack>
+                    </HStack>
+                </Center>
+
+                <Divider className="my-0.5" />
                 <ThemedText type="subtitle">Températures</ThemedText>
                 {weather && (
                     <WeatherChart

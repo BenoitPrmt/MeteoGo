@@ -14,6 +14,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        linkedin: '#0077B5',
+        github: '#181717',
+        viteuneplace: '#02abfd',
+        colocplus: '#ff0054',
         primary: {
           0: 'rgb(var(--color-primary-0)/<alpha-value>)',
           50: 'rgb(var(--color-primary-50)/<alpha-value>)',

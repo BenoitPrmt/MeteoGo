@@ -39,18 +39,11 @@ const CityDetails = ({ isOpen, handleClose, city }: Props) => {
                     </ActionsheetItemText>
                 </ActionsheetItem>
 
-                <ActionsheetItem>
+                <ActionsheetItem className={"pb-10"}>
                     <Badge size="md" variant="solid" action="info">
                         <BadgeIcon as={Users} className="mr-2"/>
                         <BadgeText>{formatThousands(city.population)} habitants</BadgeText>
                     </Badge>
-                </ActionsheetItem>
-
-                <ActionsheetItem className={"mb-10 display:flex justify-center"}>
-                    <Button size="md" variant="solid" action="primary" onPress={() => console.log('Changer de ville')}>
-                        <ButtonIcon as={SunMediumIcon}/>
-                        <ButtonText>Voir une autre ville</ButtonText>
-                    </Button>
                 </ActionsheetItem>
             </ActionsheetContent>
         </Actionsheet>
