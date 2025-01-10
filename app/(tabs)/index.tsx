@@ -13,6 +13,8 @@ import {Skeleton} from "@/components/ui/skeleton";
 import {Image} from "@/components/ui/image";
 import {WMO_ICONS} from "@/constants/WMO";
 import WeatherChart from "@/components/WeatherChart";
+import {CHART_CONFIG} from "@/constants/Chart";
+import {LineChartData} from "react-native-chart-kit/dist/line-chart/LineChart";
 
 type GeocodingResultType = {
     results: CityType[];
@@ -96,46 +98,31 @@ export default function HomeScreen() {
         loadData().then(() => console.log("Données chargées"));
     }, []);
 
-    const chartConfig = {
-        backgroundColor: "#0062e2",
-        backgroundGradientFrom: "#0064fb",
-        backgroundGradientTo: "#2693ff",
-        decimalPlaces: 1,
-        color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-        style: {
-            borderRadius: 16
-        },
-        propsForDots: {
-            r: "2",
-            strokeWidth: "1",
-        }
-    };
-
-    const dataTemperatures = {
-        labels: weather?.hourly.time,
+    const dataTemperatures: LineChartData = {
+        labels: weather?.hourly.time || [],
         datasets: [
             {
-                data: weather?.hourly.temperature_2m,
+                data: weather?.hourly.temperature_2m || [],
                 color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`,
             }
         ],
     };
 
-    const dataPrecipitations = {
-        labels: weather?.hourly.time,
+    const dataPrecipitations: LineChartData = {
+        labels: weather?.hourly.time || [],
         datasets: [
             {
-                data: weather?.hourly.precipitation_probability,
+                data: weather?.hourly.precipitation_probability || [],
                 color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`,
             }
         ],
     };
 
-    const dataWind = {
-        labels: weather?.hourly.time,
+    const dataWind: LineChartData = {
+        labels: weather?.hourly.time || [],
         datasets: [
             {
-                data: weather?.hourly.wind_speed_10m,
+                data: weather?.hourly.wind_speed_10m || [],
                 color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`,
             }
         ],
@@ -167,10 +154,9 @@ export default function HomeScreen() {
                 <ThemedText type="subtitle">Températures</ThemedText>
                 {weather && (
                     <WeatherChart
-                        // @ts-ignore
                         data={dataTemperatures}
                         width={screenWidth - 20}
-                        chartConfig={chartConfig}
+                        chartConfig={CHART_CONFIG}
                         yAxisSuffix={weather.hourly_units.temperature_2m}
                     />
                 )}
@@ -180,10 +166,9 @@ export default function HomeScreen() {
                 <ThemedText type="subtitle">Probabilité de précipitations</ThemedText>
                 {weather && (
                     <WeatherChart
-                        // @ts-ignore
                         data={dataPrecipitations}
                         width={screenWidth - 20}
-                        chartConfig={chartConfig}
+                        chartConfig={CHART_CONFIG}
                         yAxisSuffix={weather.hourly_units.precipitation_probability}
                     />
                 )}
@@ -193,10 +178,9 @@ export default function HomeScreen() {
                 <ThemedText type="subtitle">Vitesse du vent</ThemedText>
                 {weather && (
                     <WeatherChart
-                        // @ts-ignore
                         data={dataWind}
                         width={screenWidth - 20}
-                        chartConfig={chartConfig}
+                        chartConfig={CHART_CONFIG}
                         yAxisSuffix={weather.hourly_units.wind_speed_10m}
                     />
                 )}
