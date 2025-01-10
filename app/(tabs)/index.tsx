@@ -8,68 +8,35 @@ import {Center} from "@/components/ui/center";
 import {VStack} from "@/components/ui/vstack";
 import {useEffect, useState} from "react";
 import {Dimensions} from "react-native";
-import {LineChart} from "react-native-chart-kit";
 import {Skeleton} from "@/components/ui/skeleton";
 import {Image} from "@/components/ui/image";
 import {WMO_ICONS} from "@/constants/WMO";
 import WeatherChart from "@/components/WeatherChart";
 import {CHART_CONFIG} from "@/constants/Chart";
 import {LineChartData} from "react-native-chart-kit/dist/line-chart/LineChart";
+import {Pressable} from "@/components/ui/pressable";
+import CityDetails from "@/components/CityDetails";
+import cityDetails from "@/components/CityDetails";
+import {CityType, GeocodingResultType} from "@/types/City";
+import {WeatherType} from "@/types/Weather";
 
-type GeocodingResultType = {
-    results: CityType[];
-}
-
-type CityType = {
-    id: number;
-    name: string;
-    latitude: number;
-    longitude: number;
-    country_code: string;
-    timezone: string;
-    population: number;
-    postcodes: string[];
-    country_id: number;
-    country: string;
-    admin1: string;
-    admin2: string;
-}
-
-type WeatherType = {
-    latitude: number;
-    longitude: number;
-    current_units: {
-        temperature_2m: string;
-        apparent_temperature: string;
-        precipitation: string;
-    },
-    current: {
-        time: string;
-        temperature_2m: number;
-        apparent_temperature: number;
-        precipitation: number;
-        weather_code: number;
-    },
-    hourly_units: {
-        time: string;
-        temperature_2m: string;
-        precipitation_probability: string;
-        wind_speed_10m: string;
-    },
-    hourly: {
-        time: string[];
-        temperature_2m: number[];
-        precipitation_probability: number[];
-        wind_speed_10m: number[];
-    }
-}
 
 export default function HomeScreen() {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [city, setCity] = useState<CityType>()
     const [weather, setWeather] = useState<WeatherType>();
 
+    const [isCityDetailsOpen, setCityDetailsOpen] = useState<boolean>(false);
+
     const screenWidth = Dimensions.get("window").width;
+
+    const handleOpenCityDetails = () => {
+        setCityDetailsOpen(true);
+    }
+
+    const handleCloseCityDetails = () => {
+        setCityDetailsOpen(false);
+    }
 
     const handleRefresh = async () => {
         setIsRefreshing(true);
@@ -141,9 +108,11 @@ export default function HomeScreen() {
                         </Heading>
                     </Center>
                     <Center>
-                        <Heading className={"font-bold text-4xl text-white"}>
-                            {city?.name}
-                        </Heading>
+                        <Pressable onPress={handleOpenCityDetails}>
+                            <Heading className={"font-bold text-4xl text-white"}>
+                                {city?.name}
+                            </Heading>
+                        </Pressable>
                     </Center>
                     <Center>
                         {weather && <Image size={"md"} source={WMO_ICONS[`${weather?.current.weather_code}`].day.image} alt={WMO_ICONS[`${weather?.current.weather_code}`].day.description} /> }
@@ -186,6 +155,9 @@ export default function HomeScreen() {
                 )}
                 {!weather && <Skeleton variant="sharp" className="h-[220px] w-full rounded-md" />}
             </ThemedView>
+
+            {city && <CityDetails isOpen={isCityDetailsOpen} handleClose={handleCloseCityDetails} city={city} />}
+
         </ParallaxScrollView>
     );
 }
