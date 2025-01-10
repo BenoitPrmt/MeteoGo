@@ -8,7 +8,7 @@ import {Center} from "@/components/ui/center";
 import {VStack} from "@/components/ui/vstack";
 import {useEffect, useState} from "react";
 import {Dimensions} from "react-native";
-import {Skeleton} from "@/components/ui/skeleton";
+import {Skeleton, SkeletonText} from "@/components/ui/skeleton";
 import {Image} from "@/components/ui/image";
 import {WMO_ICONS} from "@/constants/WMO";
 import WeatherChart from "@/components/WeatherChart";
@@ -33,6 +33,7 @@ import ChangeCity from "@/components/ChangeCity";
 import {Divider} from "@/components/ui/divider";
 import {HStack} from "@/components/ui/hstack";
 import {PersistanceService} from "@/services/PersistanceService";
+import WeatherData from "@/components/WeatherData";
 
 
 export default function HomeScreen() {
@@ -164,53 +165,15 @@ export default function HomeScreen() {
 
                     <Center>
                         <HStack space={"3xl"}>
-                            <VStack>
-                                <Center>
-                                    <Icon as={ThermometerSunIcon} color={"#2f3370"}/>
-                                    <Heading className={"font-bold text-xl text-[#2f3370]"}>
-                                        {weather?.current.apparent_temperature}{weather?.current_units.apparent_temperature}
-                                    </Heading>
-                                </Center>
-                            </VStack>
+                            <WeatherData icon={ThermometerSunIcon} color={"#2f3370"} weather={weather} data={`${weather?.current.apparent_temperature}${weather?.current_units.apparent_temperature}`} />
 
-                            <VStack>
-                                <Center>
-                                    <Icon as={ArrowDownIcon} color={"#208eff"}/>
-                                    <Heading className={"font-bold text-xl text-[#208eff]"}>
-                                        {weather?.daily.temperature_2m_min}{weather?.daily_units.temperature_2m_min}
-                                    </Heading>
-                                </Center>
-                            </VStack>
+                            <WeatherData icon={ArrowDownIcon} color={"#208eff"} weather={weather} data={`${weather?.daily.temperature_2m_min}${weather?.daily_units.temperature_2m_min}`} />
+                            <WeatherData icon={ArrowUpIcon} color={"#ff2937"} weather={weather} data={`${weather?.daily.temperature_2m_max}${weather?.daily_units.temperature_2m_max}`} />
 
-                            <VStack>
-                                <Center>
-                                    <Icon as={ArrowUpIcon} color={"#ff2937"}/>
-                                    <Heading className={"font-bold text-xl text-[#ff2937]"}>
-                                        {weather?.daily.temperature_2m_max}{weather?.daily_units.temperature_2m_max}
-                                    </Heading>
-                                </Center>
-                            </VStack>
-                            {/*</HStack>*/}
-                            {/*<HStack space={"4xl"} className={'pt-2'}>*/}
-                            <VStack>
-                                <Center>
-                                    <Icon as={SunriseIcon} color={"#ffb32e"}/>
-                                    <Heading className={"font-bold text-xl text-[#ffb32e]"}>
-                                        {/* @ts-ignore */}
-                                        {new Date(weather?.daily.sunrise).toLocaleTimeString('fr-FR').slice(0, 5)}
-                                    </Heading>
-                                </Center>
-                            </VStack>
-
-                            <VStack>
-                                <Center>
-                                    <Icon as={SunsetIcon} color={"#fa3d75"}/>
-                                    <Heading className={"font-bold text-xl text-[#fa3d75]"}>
-                                        {/* @ts-ignore */}
-                                        {new Date(weather?.daily.sunset).toLocaleTimeString('fr-FR').slice(0, 5)}
-                                    </Heading>
-                                </Center>
-                            </VStack>
+                            {/* @ts-ignore */}
+                            <WeatherData icon={SunriseIcon} color={"#ffb32e"} weather={weather} data={new Date(weather?.daily.sunrise).toLocaleTimeString('fr-FR').slice(0, 5)} />
+                            {/* @ts-ignore */}
+                            <WeatherData icon={SunsetIcon} color={"#fa3d75"} weather={weather} data={new Date(weather?.daily.sunset).toLocaleTimeString('fr-FR').slice(0, 5)} />
                         </HStack>
                     </Center>
 

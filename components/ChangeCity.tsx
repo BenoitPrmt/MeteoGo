@@ -9,11 +9,23 @@ import {
 } from "@/components/ui/actionsheet";
 import {Badge, BadgeIcon, BadgeText} from "@/components/ui/badge";
 import {Button, ButtonIcon, ButtonText} from "@/components/ui/button";
-import {SearchIcon, SunMediumIcon, Users} from "lucide-react-native";
+import {ChevronDownIcon, SearchIcon, SunMediumIcon, Users} from "lucide-react-native";
 import {CityType} from "@/types/City";
 import {formatThousands} from "@/utils/numbers";
 import {Input, InputField} from "@/components/ui/input";
 import {Keyboard, KeyboardAvoidingView, Platform} from "react-native";
+import {
+    Select,
+    SelectBackdrop,
+    SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper,
+    SelectIcon,
+    SelectInput, SelectItem,
+    SelectPortal,
+    SelectTrigger
+} from "@/components/ui/select";
+import {Divider} from "@/components/ui/divider";
+import {Center} from "@/components/ui/center";
+import {Heading} from "@/components/ui/heading";
 
 type Props = {
     isOpen: boolean;
@@ -63,6 +75,11 @@ const ChangeCity = ({isOpen, handleClose, setCity}: Props) => {
                 <ActionsheetDragIndicatorWrapper>
                     <ActionsheetDragIndicator/>
                 </ActionsheetDragIndicatorWrapper>
+
+                <ActionsheetItem>
+                    <Heading size={"xl"}>Rechercher une ville</Heading>
+                </ActionsheetItem>
+
                 <ActionsheetItem>
                     <Input variant="outline" size="md" className={"w-full"}>
                         <InputField
