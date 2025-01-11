@@ -1,22 +1,33 @@
-# Weather App
+# MétéoGo 🌦️
 
-## Todo
-- [x] Persistance de la dernière ville
-- [ ] Suggestion de villes (Paris, New York, Londres, Tokyo, Marrakesh)
-- [x] Températures mini - maxi
+## 📱 Contexte
+MétéoGo est une application météo développée en React Native avec Expo.
 
-This is an [Expo](https://expo.dev) + React Native project.
+## ✨ Fonctionnalités
+- Afficher la météo actuelle d'une ville
+- Voir les prévisions des prochaines heures
 
-## Get started
+## ⚡️️ Prérequis
+Vous devez avoir NodeJS en version 20 ou supérieure installée sur votre machine.
 
-1. Install dependencies
+## 🚀 Installation et lancement du projet
 
-   ```bash
-   npm install
-   ```
+1. Clonez le projet sur votre machine locale :
+```bash
+git clone https://github.com/BenoitPrmt/MeteoGo.git
+cd MeteoGo
+```
 
-2. Start the app
+2. Installer les dépendances
 
-   ```bash
-    npm run start
-   ```
+```bash
+npm install
+```
+
+3. Lancez le projet
+
+```bash
+ npm run start
+```
+
+Développé par **Benoit Parmentier** - `contact@benoitparmentier.fr`
